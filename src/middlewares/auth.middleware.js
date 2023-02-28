@@ -5,7 +5,7 @@ import { config } from 'dotenv'
 config()
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY
 
-exports.isLoggedIn = async (req, res, next) => {
+const isLoggedIn = async (req, res, next) => {
     try {
         const token = req.headers.authorization
         if (!token) return res.status(401).json({ message: "You are not logged in" })
@@ -20,7 +20,7 @@ exports.isLoggedIn = async (req, res, next) => {
     }
 }
 
-exports.isAdmin = async (req, res, next) => {
+const isAdmin = async (req, res, next) => {
     try {
         const token = req.headers.authorization
         if (!token) return res.status(401).json({ message: "You are not an admin" })
@@ -33,4 +33,9 @@ exports.isAdmin = async (req, res, next) => {
         console.log(error)
         return res.status(500).json({ message: "Internal server error 500." })
     }
+}
+
+export {
+    isAdmin,
+    isLoggedIn
 }

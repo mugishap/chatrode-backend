@@ -3,7 +3,7 @@ const whitelist = [
     "http://localhost:3000",
     "http://localhost:5000"
   ];
-  const corsOptions = {
+  const options = {
     origin: (origin, callback) => {
       if (whitelist.indexOf(origin) !== -1) {
         callback(null, true);
@@ -17,5 +17,5 @@ const whitelist = [
     exposedHeaders: ["*", "Authorization"]
   };
   
-  export default corsOptions;
+  export default options;
   

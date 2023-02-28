@@ -6,7 +6,8 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon app.js"
+    "dev": "node src/docs/swagger.js && nodemon app.js",
+    "swagger-autogen": "node src/docs/swagger.js"
   },
   "author": "mugishap",
   "license": "MIT",
@@ -25,6 +26,8 @@
     "nodemailer": "^6.9.1",
     "nodemon": "^2.0.20",
     "socket.io": "^4.6.1",
+    "swagger-autogen": "^2.23.1",
+    "swagger-ui-express": "^4.6.2",
     "validator": "^13.9.0"
   }
 }

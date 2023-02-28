@@ -1,8 +1,8 @@
 import { config } from "dotenv"
-import User from "../models/user"
-import PasswordReset from "../models/passwordReset"
-import Verification from "../models/verification"
-import { sendAccountVerificationEmail, sendPaswordResetEmail } from "../utils/mail.util"
+import User from "../models/user.js"
+import PasswordReset from "../models/passwordReset.js"
+import Verification from "../models/verification.js"
+import { sendAccountVerificationEmail, sendPaswordResetEmail } from "../utils/mail.util.js"
 import bcrypt from 'bcryptjs'
 
 config()
@@ -118,10 +118,11 @@ const resetPassword = async (req, res) => {
     }
 }
 
-export const authController = {
+const authController = {
     login,
     initiateEmailVerification,
     initiatePasswordReset,
     verifyEmail,
     resetPassword
 }
+export default authController

@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs"
 import { config } from "dotenv"
 import User from "../models/user.js"
 import Verification from "../models/verification.js"
+import PasswordReset from '../models/passwordReset.js'
 
 config()
 const HASH_SALT = process.env.HASH_SALT
@@ -28,7 +29,7 @@ const registerUser = async (req, res) => {
     }
 }
 
-export const getAllUsers = async (req, res) => {
+const getAllUsers = async (req, res) => {
     try {
         const users = await User.find()
         return res.status(200).json(new ApiResponse(true, "All users", users))
@@ -38,7 +39,7 @@ export const getAllUsers = async (req, res) => {
     }
 }
 
-export const getUserById = async (req, res) => {
+const getUserById = async (req, res) => {
     try {
         const user = await User.findById(req.params.id)
         if (!user) return res.status(404).json(new ApiResponse(false, "User not found", null))
@@ -49,7 +50,7 @@ export const getUserById = async (req, res) => {
     }
 }
 
-export const updateUserById = async (req, res) => {
+const updateUserById = async (req, res) => {
     try {
         const { error } = UpdateUserSchema(req.body)
         if (error) return res.status(400).json(new ApiResponse(false, error.details[0].message, null))
@@ -68,7 +69,7 @@ export const updateUserById = async (req, res) => {
         const verification = await Verification.findOne({ user: user._id })
         verification.verified = false
         verification.save()
-        
+
         return res.status(200).json(new ApiResponse(true, "User updated successfully", user))
     } catch (error) {
         console.log(error)
@@ -76,7 +77,7 @@ export const updateUserById = async (req, res) => {
     }
 }
 
-export const updateProfileStatus = async (req, res) => {
+const updateProfileStatus = async (req, res) => {
     try {
         const { profileStatus } = req.body
         const user = await User.findById(req.user.id)
@@ -90,7 +91,7 @@ export const updateProfileStatus = async (req, res) => {
     }
 }
 
-export const deleteUserByAdmin = async (req, res) => {
+const deleteUserByAdmin = async (req, res) => {
     try {
         const user = await User.findById(req.params.id)
         if (!user) return res.status(404).json(new ApiResponse(false, "User not found", null))
@@ -102,7 +103,7 @@ export const deleteUserByAdmin = async (req, res) => {
     }
 }
 
-export const deleteUser = async (req, res) => {
+const deleteUser = async (req, res) => {
     try {
         const user = await User.findById(req.user.id)
         if (!user) return res.status(404).json(new ApiResponse(false, "User not found", null))
@@ -114,3 +115,27 @@ export const deleteUser = async (req, res) => {
     }
 }
 
+const getUserReport = async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id)
+        if (!user) return res.status(404).json(new ApiResponse(false, "User not found", null))
+        const verification = await Verification.findOne({ user: user._id })
+        const passwordReset = await PasswordReset.findOne({ user: user._id })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json(new ApiResponse(false, "Internal Server Error", null))
+    }
+}
+
+const userController = {
+    registerUser,
+    getAllUsers,
+    getUserById,
+    updateUserById,
+    updateProfileStatus,
+    deleteUserByAdmin,
+    deleteUser,
+    getUserReport
+}
+
+export default userController

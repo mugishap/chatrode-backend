@@ -2,7 +2,8 @@ import mongoose, { Schema } from "mongoose";
 
 const VerificationSchema = Schema({
     user: {
-        type: String,
+        type: Schema.Types.ObjectId,
+        ref: "user",
         required: true,
     },
     verified: {
