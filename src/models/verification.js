@@ -6,7 +6,7 @@ const VerificationSchema = Schema({
         required: true,
     },
     verified: {
-        type: String,
+        type: Boolean,
         required: false,
         default: false
     },
@@ -21,4 +21,4 @@ const VerificationSchema = Schema({
     }
 })
 const Verification = mongoose.model("Verification", VerificationSchema)
-export { Verification }
+export default Verification

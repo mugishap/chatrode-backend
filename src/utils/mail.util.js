@@ -23,14 +23,25 @@ transporter.verify(function (error, success) {
     }
 });
 
-exports.sendAccountVerificationEmail = async (email, text, html, subject, request) => {
+const sendAccountVerificationEmail = async (email, names, verificationToken) => {
     try {
-        const info = await transporter.sendMail({
-            from: process.env.EMAIL_USER,
+        const info = transporter.sendMail({
+            from: process.env.MAIL_USER,
             to: email,
-            subject,
-            text,
-            html
+            subject: "ChatRode Account Verification",
+            html:
+                `
+            <!DOCTYPE html>
+                <html>
+                <body>
+                    <h2>Dear ${names}, </h2>
+                    <h2> To verify your account. Click the link below</h2>
+                    <a href="${process.env.CLIENT_URL}/auth/verify-email/${verificationToken}" style="color:#4200FE;letter-spacing: 2px;">Click here</a>
+                    <p>Best regards,<br>ProjectN team</p>
+                </body>
+            </html>
+            `
+
         });
 
         return {
@@ -44,14 +55,25 @@ exports.sendAccountVerificationEmail = async (email, text, html, subject, reques
     }
 };
 
-exports.sendPaswordResetEmail = async (email, text, html, subject, request) => {
+const sendPaswordResetEmail = async (email, names, passwordResetToken) => {
     try {
-        const info = await transporter.sendMail({
-            from: process.env.EMAIL_USER,
+        const info = transporter.sendMail({
+            from: process.env.MAIL_USER,
             to: email,
-            subject,
-            text,
-            html
+            subject: "ChatRode Password Reset",
+            html:
+                `
+            <!DOCTYPE html>
+                <html>
+                <body>
+                    <h2>Dear ${names}, </h2>
+                    <h2> Click on the link below to change you password</h2>
+                    <a href="${process.env.CLIENT_URL}/auth/forgot-password/${passwordResetToken}" style="color:#4200FE;letter-spacing: 2px;">Click here</a>
+                    <p>Best regards,<br>ProjectN team</p>
+                </body>
+            </html>
+            `
+
         });
 
         return {
@@ -64,3 +86,5 @@ exports.sendPaswordResetEmail = async (email, text, html, subject, request) => {
         return { message: "Unable to send email", status: false };
     }
 };
+
+export { sendAccountVerificationEmail,sendPaswordResetEmail };

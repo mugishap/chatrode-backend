@@ -1,12 +1,12 @@
 {
   "name": "chat-rode-server",
   "version": "1.0.0",
-  "type":"module",
+  "type": "module",
   "description": "Messaging app MERN stack",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev":"nodemon app.js"
+    "dev": "nodemon app.js"
   },
   "author": "mugishap",
   "license": "MIT",
@@ -24,6 +24,7 @@
     "mongoose": "^6.10.0",
     "nodemailer": "^6.9.1",
     "nodemon": "^2.0.20",
+    "socket.io": "^4.6.1",
     "validator": "^13.9.0"
   }
 }

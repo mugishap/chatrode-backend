@@ -1,19 +1,25 @@
 import mongoose, { Schema } from "mongoose";
 
 const UserSchema = new Schema({
-    fullName: {
+    fullname: {
         type: String,
         required: true,
+        minlength: 4,
+        maxlength: 50
     },
     username: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        minlength: 4,
+        maxlength: 20
     },
     email: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        minlength: 4,
+        maxlength: 40
     },
     avatar: {
         type: String,
@@ -25,10 +31,19 @@ const UserSchema = new Schema({
         required: false,
         default: ""
     },
+    online: {
+        type: Boolean,
+        default: false,
+        required: false
+    },
     role: {
         type: String,
         enum: ["ADMIN", "NORMAL"],
         default: "NORMAL"
+    },
+    profileStatus: {
+        type: String,
+        required: false
     },
     password: {
         type: String,
@@ -52,4 +67,4 @@ const UserSchema = new Schema({
 
 
 const User = mongoose.model('user', UserSchema)
-export { User }
+export default User
