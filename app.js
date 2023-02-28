@@ -24,11 +24,12 @@ const PORT = process.env.PORT || 5000
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 // app.use(cors(options));
+app.use(cors({ origin: "*   " }))
 app.use(bodyParser.json())
 app.use(cookieParser())
-app.use("/auth", authRouter)
-app.use("/user", userRouter)
-app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerFile))
+app.use("/api/v1/auth", authRouter)
+app.use("/api/v1/user", userRouter)
+app.use('/api/v1/docs', swaggerUi.serve, swaggerUi.setup(swaggerFile))
 app.use("*", (req, res) => {
     res.status(404).json(new ApiResponse(false, "Route not found", null));
 });

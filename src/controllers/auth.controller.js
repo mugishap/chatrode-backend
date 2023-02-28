@@ -4,6 +4,10 @@ import PasswordReset from "../models/passwordReset.js"
 import Verification from "../models/verification.js"
 import { sendAccountVerificationEmail, sendPaswordResetEmail } from "../utils/mail.util.js"
 import bcrypt from 'bcryptjs'
+import { LoginUserSchema } from "../validator/index.js"
+import jwt from 'jsonwebtoken'
+import { ApiResponse } from "../responses/api.response.js"
+import crypto from 'crypto'
 
 config()
 const HASH_SALT = process.env.HASH_SALT
@@ -11,14 +15,14 @@ const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY
 
 const login = async (req, res) => {
     try {
-        const { error } = LoginSchema(req.body)
+        const { error } = LoginUserSchema.validate(req.body)
         if (error) return res.status(400).json(new ApiResponse(false, error.details[0].message, null))
         const { email, password } = req.body
         const user = await User.findOne({ email })
         if (!user) return res.status(404).json(new ApiResponse(false, "Incorrect credentials", null))
         const isPasswordCorrect = await bcrypt.compare(password, user.password)
         if (!isPasswordCorrect) return res.status(404).json(new ApiResponse(false, "Incorrect credentials", null))
-        const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET_KEY, { expiresIn: "1d" })
+        const token = await jwt.sign({ id: user._id, role: user.role }, JWT_SECRET_KEY, { expiresIn: "31d" })
         return res.status(200).json(new ApiResponse(true, "Login successful", { user, token }))
     } catch (error) {
         console.log(error)
@@ -26,7 +30,7 @@ const login = async (req, res) => {
     }
 }
 
-const initiateEmailVerification = async (req, res) => {
+const   initiateEmailVerification = async (req, res) => {
     try {
 
         const user = await User.findById(req.user.id)
@@ -42,7 +46,7 @@ const initiateEmailVerification = async (req, res) => {
         verification.expiresAt = verificationExpiry
 
         await verification.save()
-        const email = await sendAccountVerificationEmail(user.email, user.names, verificationToken)
+        const email = await sendAccountVerificationEmail(user.email, user.fullname, verificationToken)
         return res.status(200).json(new ApiResponse(true, "Verification email sent", { verificationToken, email }))
 
     } catch (error) {
@@ -72,7 +76,7 @@ const initiatePasswordReset = async (req, res) => {
         passwordReset.expiresAt = passwordResetExpiry
 
         await passwordReset.save()
-        const sentMail = await sendPaswordResetEmail(user.email, user.names, passwordResetToken)
+        const sentMail = await sendPaswordResetEmail(user.email, user.fullname, passwordResetToken)
         return res.status(200).json(new ApiResponse(true, "Password reset email email sent", { passwordResetToken, sentMail }))
 
     } catch (error) {
@@ -109,7 +113,7 @@ const resetPassword = async (req, res) => {
         await passwordReset.save()
         const user = await User.findById(passwordReset.user)
         if (!user) return res.status(404).json(new ApiResponse(false, "User not found", null))
-        user.password = await bcrypt.hash(password, HASH_SALT)
+        user.password = await bcrypt.hash(password, 8)
         user.save()
         return res.status(200).json(new ApiResponse(true, "Password reset successful", user))
     } catch (error) {

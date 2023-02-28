@@ -5,13 +5,13 @@
     "title": "REST API",
     "description": ""
   },
-  "host": "localhost:3000",
+  "host": "localhost:5001",
   "basePath": "/",
   "schemes": [
     "http"
   ],
   "paths": {
-    "/register": {
+    "/user/register": {
       "post": {
         "description": "",
         "parameters": [
@@ -50,7 +50,7 @@
         }
       }
     },
-    "/update": {
+    "/user/update": {
       "post": {
         "description": "",
         "parameters": [
@@ -103,7 +103,7 @@
         }
       }
     },
-    "/update-status": {
+    "/user/update-status": {
       "post": {
         "description": "",
         "parameters": [
@@ -141,7 +141,7 @@
         }
       }
     },
-    "/all": {
+    "/user/all": {
       "get": {
         "description": "",
         "parameters": [
@@ -164,7 +164,7 @@
         }
       }
     },
-    "/{id}": {
+    "/user/{id}": {
       "get": {
         "description": "",
         "parameters": [
@@ -196,7 +196,7 @@
         }
       }
     },
-    "/delete/{id}": {
+    "/user/delete/{id}": {
       "delete": {
         "description": "",
         "parameters": [
@@ -228,7 +228,7 @@
         }
       }
     },
-    "/delete": {
+    "/user/delete": {
       "delete": {
         "description": "",
         "parameters": [
@@ -254,7 +254,7 @@
         }
       }
     },
-    "/report/{id}": {
+    "/user/report/{id}": {
       "get": {
         "description": "",
         "parameters": [
@@ -283,7 +283,7 @@
         }
       }
     },
-    "/login": {
+    "/auth/login": {
       "post": {
         "description": "",
         "parameters": [
@@ -319,7 +319,7 @@
         }
       }
     },
-    "/initiate-password-reset": {
+    "/auth/initiate-password-reset": {
       "post": {
         "description": "",
         "parameters": [
@@ -349,7 +349,7 @@
         }
       }
     },
-    "/reset-password": {
+    "/auth/reset-password": {
       "post": {
         "description": "",
         "parameters": [
@@ -382,7 +382,7 @@
         }
       }
     },
-    "/initiate-email-verification": {
+    "/auth/initiate-email-verification": {
       "post": {
         "description": "",
         "parameters": [
@@ -411,7 +411,7 @@
         }
       }
     },
-    "/verify-email": {
+    "/auth/verify-email": {
       "post": {
         "description": "",
         "parameters": [
