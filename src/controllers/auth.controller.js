@@ -18,7 +18,7 @@ const login = async (req, res) => {
         if (!user) return res.status(404).json(new ApiResponse(false, "Incorrect credentials", null))
         const isPasswordCorrect = await bcrypt.compare(password, user.password)
         if (!isPasswordCorrect) return res.status(404).json(new ApiResponse(false, "Incorrect credentials", null))
-        const token = jwt.sign({ id: user._id }, JWT_SECRET_KEY, { expiresIn: "1d" })
+        const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET_KEY, { expiresIn: "1d" })
         return res.status(200).json(new ApiResponse(true, "Login successful", { user, token }))
     } catch (error) {
         console.log(error)

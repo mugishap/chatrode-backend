@@ -104,7 +104,7 @@ export const deleteUserByAdmin = async (req, res) => {
 
 export const deleteUser = async (req, res) => {
     try {
-        const user = await User.findById(req.user._id)
+        const user = await User.findById(req.user.id)
         if (!user) return res.status(404).json(new ApiResponse(false, "User not found", null))
         await user.delete()
         return res.status(200).json(new ApiResponse(true, "User deleted successfully", null))
