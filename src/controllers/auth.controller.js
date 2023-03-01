@@ -96,7 +96,7 @@ const verifyEmail = async (req, res) => {
         verification.expiresAt = null
         verification.verificationToken = null
         await verification.save()
-        return res.status(200).json(new ApiResponse(true, "Account verified", user))
+        return res.status(200).json(new ApiResponse(true, "Account verified", {user}))
     } catch (error) {
         console.log(error)
         return res.status(500).json(new ApiResponse(false, "Internal Server Error", null))
@@ -115,7 +115,7 @@ const resetPassword = async (req, res) => {
         if (!user) return res.status(404).json(new ApiResponse(false, "User not found", null))
         user.password = await bcrypt.hash(password, 8)
         user.save()
-        return res.status(200).json(new ApiResponse(true, "Password reset successful", user))
+        return res.status(200).json(new ApiResponse(true, "Password reset successful", {user}))
     } catch (error) {
         console.log(error)
         return res.status(500).json(new ApiResponse(false, "Internal Server Error", null))

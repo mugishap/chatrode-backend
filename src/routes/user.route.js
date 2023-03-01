@@ -13,5 +13,6 @@ userRouter.delete('/delete/:id', isLoggedIn, isAdmin, userController.deleteUserB
 userRouter.delete('/delete', isLoggedIn, userController.deleteUser)
 userRouter.get("/report/:id", isLoggedIn, userController.getUserReport)
 userRouter.get("/search/:query", isLoggedIn, userController.searchUser)
+userRouter.post("/update-avatar", isLoggedIn, userController.updateAvatar)
 
 export default userRouter

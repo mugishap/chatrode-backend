@@ -5,9 +5,11 @@ import { config } from "dotenv"
 import User from "../models/user.js"
 import Verification from "../models/verification.js"
 import PasswordReset from '../models/passwordReset.js'
+import jwt from "jsonwebtoken"
 
 config()
 const HASH_SALT = process.env.HASH_SALT
+const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY
 
 const registerUser = async (req, res) => {
     try {
@@ -30,7 +32,8 @@ const registerUser = async (req, res) => {
         })
         await verification.save()
         await passwordReset.save()
-        return res.status(201).json(new ApiResponse(true, "User created successfully", user))
+        const token = await jwt.sign({ id: user._id, role: user.role }, JWT_SECRET_KEY, { expiresIn: "31d" })
+        return res.status(201).json(new ApiResponse(true, "User created successfully", { user, token }))
     } catch (error) {
         console.log(error.message)
         const regex = /index:\s+(\w+)_\d+\s+/;
@@ -81,7 +84,7 @@ const updateUserById = async (req, res) => {
         user.updatedAt = Date.now()
         await user.save()
 
-        return res.status(200).json(new ApiResponse(true, "User updated successfully", user))
+        return res.status(200).json(new ApiResponse(true, "User updated successfully", { user }))
     } catch (error) {
         console.log(error.message)
         const regex = /index:\s+(\w+)_\d+\s+/;
@@ -97,7 +100,7 @@ const updateProfileStatus = async (req, res) => {
         if (!user) return res.status(404).json(new ApiResponse(false, "User not found", null))
         user.profileStatus = profileStatus
         await user.save()
-        return res.status(200).json(new ApiResponse(true, "Profile status updated successfully", user))
+        return res.status(200).json(new ApiResponse(true, "Profile status updated successfully", { user }))
     } catch (error) {
         console.log(error)
         return res.status(500).json(new ApiResponse(false, "Internal Server Error", null))
@@ -149,7 +152,21 @@ const searchUser = async (req, res) => {
     try {
         const { query } = req.params
         const users = await User.find({ $or: [{ username: (new RegExp(`${query}`)) }, { email: (new RegExp(`${query}`)) }, { fullname: (new RegExp(`${query}`)) }] })
-        return res.status(200).json(new ApiResponse(true, "Users searched successfully", users))
+        return res.status(200).json(new ApiResponse(true, "Users searched successfully", { users }))
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json(new ApiResponse(false, "Internal Server Error", null))
+    }
+}
+
+const updateAvatar = async (req, res) => {
+    try {
+        const { avatar } = req.body
+        if (!avatar) return res.status(400).json(new ApiResponse(false, "No image provided", null))
+        const user = await User.findById(req.user.id)
+        user.avatar = avatar;
+        user.save()
+        return res.status(200).json(new ApiResponse(true, "Avatar updated successfully", { user }))
     } catch (error) {
         console.log(error)
         return res.status(500).json(new ApiResponse(false, "Internal Server Error", null))
@@ -165,7 +182,8 @@ const userController = {
     deleteUserByAdmin,
     deleteUser,
     getUserReport,
-    searchUser
+    searchUser,
+    updateAvatar
 }
 
 export default userController
