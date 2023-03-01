@@ -33,11 +33,11 @@ const registerUser = async (req, res) => {
         await verification.save()
         await passwordReset.save()
         const token = await jwt.sign({ id: user._id, role: user.role }, JWT_SECRET_KEY, { expiresIn: "31d" })
-        return res.status(201).json(new ApiResponse(true, "User created successfully", { user, token }))
+        return res.status(201).json(new ApiResponse(true, "User created successfully", { user, verification, token }))
     } catch (error) {
         console.log(error.message)
         const regex = /index:\s+(\w+)_\d+\s+/;
-        if (error.message.includes(" duplicate key error collection")) return res.status(500).json(new ApiResponse(false, `Duplicate key ${(error.message.match(regex)[1])}`, error))
+        if (error.message.includes(" duplicate key error collection")) return res.status(500).json(new ApiResponse(false, `${(error.message.match(regex)[1])} already exists`, error))
         return res.status(500).json(new ApiResponse(false, "Internal Server Error", error))
     }
 }
@@ -88,7 +88,7 @@ const updateUserById = async (req, res) => {
     } catch (error) {
         console.log(error.message)
         const regex = /index:\s+(\w+)_\d+\s+/;
-        if (error.message.includes(" duplicate key error collection")) return res.status(500).json(new ApiResponse(false, `Duplicate key ${(error.message.match(regex)[1])}`, error))
+        if (error.message.includes(" duplicate key error collection")) return res.status(500).json(new ApiResponse(false, ` ${(error.message.match(regex)[1])} already exists`, error))
         return res.status(500).json(new ApiResponse(false, "Internal Server Error", error))
     }
 }

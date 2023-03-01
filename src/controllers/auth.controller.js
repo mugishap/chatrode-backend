@@ -45,10 +45,9 @@ const initiateEmailVerification = async (req, res) => {
 
         verification.verificationToken = verificationToken
         verification.expiresAt = verificationExpiry
-
         await verification.save()
         const email = await sendAccountVerificationEmail(user.email, user.fullname, verificationToken)
-        return res.status(200).json(new ApiResponse(true, "Verification email sent", { verificationToken, email }))
+        return res.status(200).json(new ApiResponse(true, "Verification email sent", { email }))
 
     } catch (error) {
         console.log(error)
@@ -89,11 +88,12 @@ const initiatePasswordReset = async (req, res) => {
 const verifyEmail = async (req, res) => {
     try {
         const { verificationToken } = req.body
-        const verification = await Verification.findOne({ verificationToken, verified: false, expiresAt: { $gt: Date.now() } })
-        if (!verification) return res.status(404).json(new ApiResponse(false, "Verification token not found", null))
+        const verification = await Verification.findOne({ verificationToken , verified: false, expiresAt: { $gt: Date.now() } })
+        if (!verification) return res.status(404).json(new ApiResponse(false, "Invalid or expired token", null))
         const user = await User.findById(verification.user)
         if (!user) return res.status(404).json(new ApiResponse(false, "User not found", null))
         verification.verified = true
+        verification.verifiedAt = Date.now()
         verification.expiresAt = null
         verification.verificationToken = null
         await verification.save()
@@ -111,6 +111,7 @@ const resetPassword = async (req, res) => {
         if (!passwordReset) return res.status(404).json(new ApiResponse(false, "Password reset token not found", null))
         passwordReset.passwordResetToken = null
         passwordReset.expiresAt = null
+        passwordReset.lastResetAt = Date.now()
         await passwordReset.save()
         const user = await User.findById(passwordReset.user)
         if (!user) return res.status(404).json(new ApiResponse(false, "User not found", null))

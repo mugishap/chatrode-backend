@@ -25,7 +25,6 @@ const isAdmin = async (req, res, next) => {
         const token = req.headers.authorization.split(" ")[1]
         if (!token) return res.status(401).json({ message: "You are not an admin" })
         const response = await jwt.verify(token, JWT_SECRET_KEY, {})
-        console.log(response.role);
         if (response.role !== "ADMIN") return res.status(401).json({ message: "You are not an admin" })
         req.user = response
         next()
