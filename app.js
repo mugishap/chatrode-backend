@@ -11,7 +11,6 @@ import userRouter from './src/routes/user.route.js'
 import { Server } from 'socket.io'
 import Message from './src/models/message.js'
 import { ApiResponse } from './src/responses/api.response.js'
-import swaggerUi from 'swagger-ui-express'
 
 config()
 connectDB()
@@ -22,7 +21,7 @@ const PORT = process.env.PORT || 5000
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-// app.use(cors(options));
+app.use(cors(options));
 app.use(cors({ origin: "*   " }))
 app.use(bodyParser.json())
 app.use(cookieParser())

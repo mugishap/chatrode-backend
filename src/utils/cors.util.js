@@ -1,7 +1,7 @@
 const whitelist = [
     "https://chatrode.vercel.app",
     "http://localhost:3000",
-    "http://localhost:5000"
+    "http://localhost:5001"
   ];
   const options = {
     origin: (origin, callback) => {
