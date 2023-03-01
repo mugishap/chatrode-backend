@@ -37,7 +37,7 @@ const sendAccountVerificationEmail = async (email, names, verificationToken) => 
                     <h2>Dear ${names}, </h2>
                     <h2> To verify your account. Click the link below</h2>
                     <a href="${process.env.CLIENT_URL}/auth/verify-email/${verificationToken}" style="color:#4200FE;letter-spacing: 2px;">Click here</a>
-                    <p>Best regards,<br>ProjectN team</p>
+                    <p>Best regards,<br>Chat Rode team</p>
                 </body>
             </html>
             `
@@ -68,8 +68,8 @@ const sendPaswordResetEmail = async (email, names, passwordResetToken) => {
                 <body>
                     <h2>Dear ${names}, </h2>
                     <h2> Click on the link below to change you password</h2>
-                    <a href="${process.env.CLIENT_URL}/auth/forgot-password/${passwordResetToken}" style="color:#4200FE;letter-spacing: 2px;">Click here</a>
-                    <p>Best regards,<br>ProjectN team</p>
+                    <a href="${process.env.CLIENT_URL}/auth/reset-password/${passwordResetToken}" style="color:#4200FE;letter-spacing: 2px;">Click here</a>
+                    <p>Best regards,<br>Chat Rode team</p>
                 </body>
             </html>
             `

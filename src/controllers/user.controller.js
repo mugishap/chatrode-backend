@@ -83,8 +83,8 @@ const updateUserById = async (req, res) => {
         user.coverImage = coverImage
         user.updatedAt = Date.now()
         await user.save()
-
-        return res.status(200).json(new ApiResponse(true, "User updated successfully", { user }))
+        const verification = await Verification.findOne({ user: user._id })
+        return res.status(200).json(new ApiResponse(true, "User updated successfully", { user, verification }))
     } catch (error) {
         console.log(error.message)
         const regex = /index:\s+(\w+)_\d+\s+/;
@@ -100,7 +100,8 @@ const updateProfileStatus = async (req, res) => {
         if (!user) return res.status(404).json(new ApiResponse(false, "User not found", null))
         user.profileStatus = profileStatus
         await user.save()
-        return res.status(200).json(new ApiResponse(true, "Profile status updated successfully", { user }))
+        const verification = await Verification.findOne({ user: user._id })
+        return res.status(200).json(new ApiResponse(true, "Profile status updated successfully", { user, verification }))
     } catch (error) {
         console.log(error)
         return res.status(500).json(new ApiResponse(false, "Internal Server Error", null))
@@ -122,12 +123,13 @@ const deleteUserByAdmin = async (req, res) => {
 const deleteUser = async (req, res) => {
     try {
         const user = await User.findById(req.user.id)
+        const { password } = req.body
         if (!user) return res.status(404).json(new ApiResponse(false, "User not found", null))
-        const verification = await Verification.findById(user.verification)
-        const passwordReset = await Verification.findById(user.passwordReset)
-        await verification.delete()
-        await passwordReset.delete()
-        await user.delete()
+        const isMatch = await bcrypt.compare(password, user.password)
+        if (!isMatch) return res.status(400).json(new ApiResponse(false, "Incorrect password", null))
+        await Verification.findByIdAndDelete(user.verification)
+        await PasswordReset.findByIdAndDelete(user.passwordReset)
+        await User.findByIdAndDelete(user._id)
         return res.status(200).json(new ApiResponse(true, "User deleted successfully", null))
     } catch (error) {
         console.log(error)
@@ -166,7 +168,8 @@ const updateAvatar = async (req, res) => {
         const user = await User.findById(req.user.id)
         user.avatar = avatar;
         user.save()
-        return res.status(200).json(new ApiResponse(true, "Avatar updated successfully", { user }))
+        const verification = await Verification.findOne({ user: user._id })
+        return res.status(200).json(new ApiResponse(true, "Avatar updated successfully", { user, verification }))
     } catch (error) {
         console.log(error)
         return res.status(500).json(new ApiResponse(false, "Internal Server Error", null))

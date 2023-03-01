@@ -12,7 +12,7 @@ import { Server } from 'socket.io'
 import Message from './src/models/message.js'
 import { ApiResponse } from './src/responses/api.response.js'
 import swaggerUi from 'swagger-ui-express'
-import swaggerFile from './src/docs/swagger.json'  assert { type: "json" };
+import swaggerFile from './src/docs/swagger.json' assert { type: "json" };
 
 config()
 connectDB()
