@@ -12,7 +12,6 @@ import { Server } from 'socket.io'
 import Message from './src/models/message.js'
 import { ApiResponse } from './src/responses/api.response.js'
 import swaggerUi from 'swagger-ui-express'
-import swaggerFile from './src/docs/swagger.json' assert { type: "json" };
 
 config()
 connectDB()
@@ -29,7 +28,6 @@ app.use(bodyParser.json())
 app.use(cookieParser())
 app.use("/api/v1/auth", authRouter)
 app.use("/api/v1/user", userRouter)
-app.use('/api/v1/docs', swaggerUi.serve, swaggerUi.setup(swaggerFile))
 app.use("*", (req, res) => {
     res.status(404).json(new ApiResponse(false, "Route not found", null));
 });
