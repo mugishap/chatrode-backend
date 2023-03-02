@@ -11,6 +11,7 @@ import userRouter from './src/routes/user.route.js'
 import { Server } from 'socket.io'
 import Message from './src/models/message.js'
 import { ApiResponse } from './src/responses/api.response.js'
+import User from './src/models/user.js'
 
 config()
 connectDB()
@@ -42,7 +43,7 @@ const io = new Server(server, {
     cors: options,
 })
 io.on("connection", (socket) => {
-    socket.on("new-message", async (content, receiver, sender) => {
+    socket.on("new-message", async ({ content, receiver, sender }) => {
         const message = new Message({
             message: content,
             receiver,
@@ -52,5 +53,21 @@ io.on("connection", (socket) => {
         const messages = await Message.find({ sender, receiver })
         io.to(receiver).emit("new-messages", messages)
         socket.broadcast.emit("notification", receiver, message)
+    })
+    socket.on("set-active", async ({ userId }) => {
+        console.log("Hello active");
+        const user = await User.findById(userId)
+        if (!user) return
+        user.active = true;
+        user.save()
+        socket.emit(user)
+    })
+    socket.on("set-inactive", async ({ userId }) => {
+        console.log("Hello active");
+        const user = await User.findById(userId)
+        if (!user) return
+        user.active = false;
+        user.save()
+        socket.emit(user)
     })
 })

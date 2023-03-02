@@ -36,6 +36,10 @@ const UserSchema = new Schema({
         default: false,
         required: false
     },
+    active: {
+        type: Boolean,
+        required: false
+    },
     role: {
         type: String,
         enum: ["ADMIN", "NORMAL"],
