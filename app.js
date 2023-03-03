@@ -43,8 +43,10 @@ const io = new Server(server, {
     cors: options,
 })
 io.on("connection", (socket) => {
+
     socket.on("new-message", async ({ content, receiver, sender }) => {
-        const message = new Message({
+        console.log(sender, receiver, content);
+        const message = await new Message({
             message: content,
             receiver,
             sender
@@ -54,20 +56,21 @@ io.on("connection", (socket) => {
         io.to(receiver).emit("new-messages", messages)
         socket.broadcast.emit("notification", receiver, message)
     })
-    socket.on("set-active", async ({ userId }) => {
-        console.log("Hello active");
-        const user = await User.findById(userId)
-        if (!user) return
-        user.active = true;
-        user.save()
-        socket.emit(user)
+    socket.on("set-online", async ({ userId }) => {
+        console.log("New online user: " + userId);
+        if (!userId) return
+        socket.broadcast.emit("new-online", userId)
+        console.log("Sent new online user: " + userId);
     })
-    socket.on("set-inactive", async ({ userId }) => {
-        console.log("Hello active");
-        const user = await User.findById(userId)
-        if (!user) return
-        user.active = false;
-        user.save()
-        socket.emit(user)
+    socket.on("set-offline", async ({ userId }) => {
+        console.log("Disconnected: " + userId);
+        if (!userId) return
+        socket.broadcast.emit("new-offline", userId)
     })
+
+    socket.on("get-messages", async ({ sender, receiver }) => {
+        const messages = await Message.find({ sender, receiver })
+        socket.emit("new-messages", messages)
+    })
+
 })

@@ -45,6 +45,11 @@ const registerUser = async (req, res) => {
 const getAllUsers = async (req, res) => {
     try {
         const users = await User.find()
+        users.forEach(async(user)=>{
+            const verificationId = user.verification
+            users.verification = await Verification.findById(verificationId)
+        })
+        console.log(users);
         return res.status(200).json(new ApiResponse(true, "All users", { count: users.length, users }))
     } catch (error) {
         console.log(error)

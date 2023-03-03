@@ -24,7 +24,8 @@ const login = async (req, res) => {
         if (!isPasswordCorrect) return res.status(404).json(new ApiResponse(false, "Incorrect credentials", null))
         const token = await jwt.sign({ id: user._id, role: user.role }, JWT_SECRET_KEY, { expiresIn: "31d" })
         const verification = await Verification.findOne({ user: user._id })
-        return res.status(200).json(new ApiResponse(true, "Login successful", { user, token, verification }))
+        const users = await User.find({})
+        return res.status(200).json(new ApiResponse(true, "Login successful", { user, token, verification, users }))
     } catch (error) {
         console.log(error)
         return res.status(500).json(new ApiResponse(false, "Internal Server Error", null))
@@ -88,7 +89,7 @@ const initiatePasswordReset = async (req, res) => {
 const verifyEmail = async (req, res) => {
     try {
         const { verificationToken } = req.body
-        const verification = await Verification.findOne({ verificationToken , verified: false, expiresAt: { $gt: Date.now() } })
+        const verification = await Verification.findOne({ verificationToken, verified: false, expiresAt: { $gt: Date.now() } })
         if (!verification) return res.status(404).json(new ApiResponse(false, "Invalid or expired token", null))
         const user = await User.findById(verification.user)
         if (!user) return res.status(404).json(new ApiResponse(false, "User not found", null))
